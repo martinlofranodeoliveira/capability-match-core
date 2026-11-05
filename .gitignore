@@ -1,0 +1,6 @@
+/vendor/
+/coverage/
+/.phpunit.cache/
+*.log
+*.tmp
+.DS_Store

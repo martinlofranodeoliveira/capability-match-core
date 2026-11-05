@@ -1,0 +1,26 @@
+name: checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  php:
+    runs-on: ubuntu-latest
+    container: php:8.4-cli-bookworm
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Check runtime
+        run: php -r 'if (PHP_INT_SIZE !== 8 || !extension_loaded("json") || !extension_loaded("SPL")) { exit(1); } echo "Runtime OK\n";'
+      - name: Tests
+        run: php tests/run.php
+      - name: Tests with PHP assertions disabled
+        run: php -d zend.assertions=-1 -d assert.active=0 tests/run.php
+      - name: Checked offline demo
+        run: php bin/capability-match.php demo --assert
+      - name: Machine-readable offline demo
+        run: php bin/capability-match.php demo --json
